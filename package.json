@@ -1,0 +1,14 @@
+{
+  "name": "borer",
+  "main": "src/index.js",
+  "type": "module",
+  "version": "0.1.0",
+  "author": "Casey Foster <c@sey.me>",
+  "bin": {
+    "borer": "src/cli.js"
+  },
+  "dependencies": {
+    "commander": "6",
+    "ws": "7"
+  }
+}
