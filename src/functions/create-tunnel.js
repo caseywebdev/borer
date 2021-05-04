@@ -35,21 +35,19 @@ const getKey = authorization => {
 
 const handleMessage = message => {
   const type = message.slice(0, 1);
-  const id = message.slice(1, 5);
-  const response = responses[id];
+  const idHex = message.slice(1, 5).toString('hex');
+  const response = responses[idHex];
   if (!response || response.writableEnded) return;
 
   const data = message.slice(5);
   if (type.equals(messageTypes.start)) {
-    if (response.headersSent) return;
-
     const { headers, status } = JSON.parse(data);
     response.writeHead(status, headers);
   } else if (type.equals(messageTypes.data)) {
     response.write(data);
   } else if (type.equals(messageTypes.end)) {
     response.end();
-    delete responses[id];
+    delete responses[idHex];
   }
 };
 
@@ -81,12 +79,12 @@ export default ({ key, port }) => {
           .concat(remoteAddress)
           .join(', ') ?? remoteAddress
     };
-    responses[id] = res;
+    responses[idHex] = res;
     socket.send(
       Buffer.concat([
         messageTypes.start,
         id,
-        Buffer.from(JSON.stringify({ id, path: url, headers, method }))
+        Buffer.from(JSON.stringify({ path: url, headers, method }))
       ])
     );
     req

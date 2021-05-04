@@ -18,11 +18,12 @@ export default ({ localUrl, tunnelUrl }) => {
   socket.on('message', message => {
     const type = message.slice(0, 1);
     const id = message.slice(1, 5);
+    const idHex = id.toString('hex');
     const data = message.slice(5);
     if (type.equals(messageTypes.start)) {
       const { headers, method, path } = JSON.parse(data);
       console.log(`${method} ${path}`);
-      requests[id] = request(localUrl + path, { method, headers }, res => {
+      requests[idHex] = request(localUrl + path, { method, headers }, res => {
         socket.send(
           Buffer.concat([
             messageTypes.start,
@@ -39,10 +40,10 @@ export default ({ localUrl, tunnelUrl }) => {
           .on('end', () => socket.send(Buffer.concat([messageTypes.end, id])));
       });
     } else if (type.equals(messageTypes.data)) {
-      requests[id]?.write(data);
+      requests[idHex]?.write(data);
     } else if (type.equals(messageTypes.end)) {
-      requests[id]?.end();
-      delete requests[id];
+      requests[idHex]?.end();
+      delete requests[idHex];
     }
   });
 };
