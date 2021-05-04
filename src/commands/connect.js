@@ -9,7 +9,7 @@ export default program
   .description('Connect to a tunnel')
   .requiredOption(
     '-t, --tunnel-url [tunnelUrl]',
-    'the ws://[auth]@tunnel.url to connect to'
+    'the http(s)://[key]@tunnel.url to connect to'
   )
   .requiredOption(
     '-l, --local-url [localUrl]',

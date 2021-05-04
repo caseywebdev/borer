@@ -37,19 +37,18 @@ const handleMessage = message => {
   const type = message.slice(0, 1);
   const id = message.slice(1, 5);
   const response = responses[id];
-  if (!response) return;
+  if (!response || response.writableEnded) return;
 
   const data = message.slice(5);
   if (type.equals(messageTypes.start)) {
+    if (response.headersSent) return;
+
     const { headers, status } = JSON.parse(data);
-    for (const [key, value] of Object.entries(headers)) {
-      response.setHeader(key, value);
-    }
-    response.statusCode = status;
+    response.writeHead(status, headers);
   } else if (type.equals(messageTypes.data)) {
-    responses[id]?.write(data);
+    responses.write(data);
   } else if (type.equals(messageTypes.end)) {
-    responses[id]?.end();
+    responses.end();
     delete responses[id];
   }
 };
@@ -66,7 +65,8 @@ export default ({ key, port }) => {
     const socket = sockets[host];
     if (!socket) return notFound(res);
 
-    const idHex = (prevId = (prevId + 1) % maxId).toString(16);
+    prevId = ++prevId % maxId;
+    const idHex = prevId.toString(16);
     const id = Buffer.from(
       '0'.repeat(maxIdHex.length - idHex.length) + idHex,
       'hex'
@@ -86,14 +86,7 @@ export default ({ key, port }) => {
       Buffer.concat([
         messageTypes.start,
         id,
-        Buffer.from(
-          JSON.stringify({
-            id,
-            path: url,
-            headers,
-            method
-          })
-        )
+        Buffer.from(JSON.stringify({ id, path: url, headers, method }))
       ])
     );
     req
@@ -104,6 +97,9 @@ export default ({ key, port }) => {
   });
 
   const wss = new WebSocket.Server({ server });
+  // TODO: Add websocket proxy support, a proxy host connection should hit a
+  // /.well-known/borer-connect URL and all other URLs should proxy to
+  // sockets[host].
   wss.on('connection', (ws, req) => {
     const { authorization, host } = req.headers;
     if (sockets[host] || (key && getKey(authorization) !== key)) {
