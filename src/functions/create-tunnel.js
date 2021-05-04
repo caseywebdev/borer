@@ -46,9 +46,9 @@ const handleMessage = message => {
     const { headers, status } = JSON.parse(data);
     response.writeHead(status, headers);
   } else if (type.equals(messageTypes.data)) {
-    responses.write(data);
+    response.write(data);
   } else if (type.equals(messageTypes.end)) {
-    responses.end();
+    response.end();
     delete responses[id];
   }
 };
