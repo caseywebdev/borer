@@ -37,7 +37,7 @@ const handleMessage = message => {
   const type = message.slice(0, 1);
   const idHex = message.slice(1, 5).toString('hex');
   const response = responses[idHex];
-  if (!response || response.writableEnded) return;
+  if (!response) return;
 
   const data = message.slice(5);
   if (type.equals(messageTypes.start)) {
