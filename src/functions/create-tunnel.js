@@ -64,11 +64,9 @@ export default ({ key, port }) => {
     if (!socket) return notFound(res);
 
     prevId = ++prevId % maxId;
-    const idHex = prevId.toString(16);
-    const id = Buffer.from(
-      '0'.repeat(maxIdHex.length - idHex.length) + idHex,
-      'hex'
-    );
+    let idHex = prevId.toString(16);
+    idHex = '0'.repeat(maxIdHex.length - idHex.length) + idHex;
+    const id = Buffer.from(idHex, 'hex');
     const { remoteAddress } = req.socket;
     headers = {
       ...headers,
