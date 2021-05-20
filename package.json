@@ -4,6 +4,7 @@
   "type": "module",
   "version": "0.1.5",
   "author": "Casey Foster <c@sey.me>",
+  "license": "MIT",
   "bin": {
     "borer": "src/cli.js"
   },
