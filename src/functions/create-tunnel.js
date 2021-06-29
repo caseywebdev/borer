@@ -58,7 +58,7 @@ export default ({ key, port }) => {
       headers: { host, ...headers },
       method
     } = req;
-    if (host === 'localhost' && url === '/healthz') return res.end('OK');
+    if (url === '/.well-known/borer/healthz') return res.end('OK');
 
     const socket = sockets[host];
     if (!socket) return notFound(res);
@@ -94,7 +94,7 @@ export default ({ key, port }) => {
 
   const wss = new WebSocket.Server({ server });
   // TODO: Add websocket proxy support, a proxy host connection should hit a
-  // /.well-known/borer-connect URL and all other URLs should proxy to
+  // /.well-known/borer/connect URL and all other URLs should proxy to
   // sockets[host].
   wss.on('connection', (ws, req) => {
     const { authorization, host } = req.headers;

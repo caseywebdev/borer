@@ -8,7 +8,7 @@ import messageTypes from '../constants/message-types.js';
 export default ({ localUrl, tunnelUrl }) => {
   console.log('Connecting...');
   const socket = new WebSocket(
-    `${tunnelUrl.replace(/^http/, 'ws')}/.well-known/borer-connect`
+    `${tunnelUrl.replace(/^http/, 'ws')}/.well-known/borer/connect`
   );
   const { request } = localUrl.startsWith('https:') ? https : http;
   const requests = {};
