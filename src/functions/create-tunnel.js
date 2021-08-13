@@ -104,8 +104,18 @@ export default ({ key, port }) => {
 
     console.log(`Proxy for host '${host}' connected`);
     sockets[host] = ws;
+    const pingIntervalId = setInterval(() => ws.ping(), 30000);
+    let heartbeatTimeoutId;
+    const heartbeat = () => {
+      clearTimeout(heartbeatTimeoutId);
+      heartbeatTimeoutId = setTimeout(() => ws.terminate(), 35000);
+    };
+    heartbeat();
+    ws.on('pong', heartbeat);
     ws.on('message', handleMessage);
     ws.on('close', () => {
+      clearInterval(pingIntervalId);
+      clearTimeout(heartbeatTimeoutId);
       console.log(`Proxy for host '${host}' disconnected`);
       delete sockets[host];
     });

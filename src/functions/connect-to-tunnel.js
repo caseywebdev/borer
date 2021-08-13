@@ -12,8 +12,23 @@ export default ({ localUrl, tunnelUrl }) => {
   );
   const { request } = localUrl.startsWith('https:') ? https : http;
   const requests = {};
-  socket.on('open', () => console.log('Connected'));
-  socket.on('close', () => console.log('Connection closed'));
+  let pingIntervalId;
+  let heartbeatTimeoutId;
+  const heartbeat = () => {
+    clearTimeout(heartbeatTimeoutId);
+    heartbeatTimeoutId = setTimeout(() => socket.terminate(), 35000);
+  };
+  socket.on('open', () => {
+    pingIntervalId = setInterval(() => socket.ping(), 30000);
+    heartbeat();
+    console.log('Connected');
+  });
+  socket.on('pong', heartbeat);
+  socket.on('close', () => {
+    clearInterval(pingIntervalId);
+    clearTimeout(heartbeatTimeoutId);
+    console.log('Connection closed');
+  });
   socket.on('error', er => console.error(er));
   socket.on('message', message => {
     const type = message.slice(0, 1);
