@@ -1,6 +1,6 @@
 import http from 'http';
 
-import WebSocket from 'ws';
+import { WebSocketServer } from 'ws';
 
 import messageTypes from '../constants/message-types.js';
 
@@ -92,7 +92,7 @@ export default ({ key, port }) => {
       .on('end', () => socket.send(Buffer.concat([messageTypes.end, id])));
   });
 
-  const wss = new WebSocket.Server({ server });
+  const wss = new WebSocketServer({ server });
   // TODO: Add websocket proxy support, a proxy host connection should hit a
   // /.well-known/borer/connect URL and all other URLs should proxy to
   // sockets[host].
