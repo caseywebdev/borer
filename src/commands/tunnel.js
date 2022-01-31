@@ -1,8 +1,6 @@
-import commander from 'commander';
+import { program } from 'commander';
 
 import createTunnel from '../functions/create-tunnel.js';
-
-const { program } = commander;
 
 export default program
   .command('tunnel')

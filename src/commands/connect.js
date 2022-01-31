@@ -1,8 +1,6 @@
-import commander from 'commander';
+import { program } from 'commander';
 
 import connectToTunnel from '../functions/connect-to-tunnel.js';
-
-const { program } = commander;
 
 export default program
   .command('connect')
