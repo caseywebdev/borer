@@ -2,14 +2,14 @@
   "name": "borer",
   "main": "src/index.js",
   "type": "module",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "author": "Casey Foster <c@sey.me>",
   "license": "MIT",
   "bin": {
     "borer": "src/cli.js"
   },
   "dependencies": {
-    "commander": "9",
+    "commander": "12",
     "ws": "8"
   }
 }
